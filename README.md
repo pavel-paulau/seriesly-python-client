@@ -1,7 +1,7 @@
 seriesly-python-client
 ======================
 
-Python client for seriesly database
+Python client for [seriesly](https://github.com/dustin/seriesly) database.
 
 
 Prerequisites
