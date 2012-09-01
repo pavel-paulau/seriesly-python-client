@@ -31,3 +31,5 @@ API overview
     seriesly['testdb'].query(params={})
 
     seriesly.drop_db('testdb')
+
+See [API reference](http://seriesly.readthedocs.org/en/latest/api.html) for details.
