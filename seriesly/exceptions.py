@@ -14,11 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from functools import wraps
+
 import requests
 
 
 def verbose_error(function):
     """Ensure more verbose error message in case of connection error"""
+    @wraps(function)
     def wrapper(self, *args, **kargs):
         try:
             return function(self, *args, **kargs)
@@ -29,6 +32,7 @@ def verbose_error(function):
 
 def only_existing(function):
     """Allow operations only on existing databases"""
+    @wraps(function)
     def wrapper(self, dbname):
         if dbname not in self.list_dbs():
             raise NotExistingDatabase(dbname)
@@ -39,6 +43,7 @@ def only_existing(function):
 
 def only_not_existing(function):
     """Allow operations only on not existing databases."""
+    @wraps(function)
     def wrapper(self, dbname):
         if dbname in self.list_dbs():
             raise ExistingDatabase(dbname)
@@ -49,6 +54,7 @@ def only_not_existing(function):
 
 def correct_data(function):
     """Check data type"""
+    @wraps(function)
     def wrapper(self, data, *args, **kargs):
         if not isinstance(data, dict) or not data:
             raise TypeError('Non-empty dictionary is expected')
@@ -59,6 +65,7 @@ def correct_data(function):
 
 def correct_params(function):
     """Check type of container and names of parameters"""
+    @wraps(function)
     def wrapper(self, params, *args, **kargs):
         if not isinstance(params, dict) or not params:
             raise TypeError('Non-empty dictionary is expected')
