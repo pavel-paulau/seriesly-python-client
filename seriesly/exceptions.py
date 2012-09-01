@@ -22,9 +22,9 @@ import requests
 def verbose_error(function):
     """Ensure more verbose error message in case of connection error"""
     @wraps(function)
-    def wrapper(self, *args, **kargs):
+    def wrapper(self, url, *args, **kargs):
         try:
-            return function(self, *args, **kargs)
+            return function(self, url, *args, **kargs)
         except requests.exceptions.ConnectionError:
             raise ConnectionError(self.base_url)
     return wrapper
@@ -66,13 +66,13 @@ def correct_data(function):
 def correct_params(function):
     """Check type of container and names of parameters"""
     @wraps(function)
-    def wrapper(self, params, *args, **kargs):
+    def wrapper(self, params):
         if not isinstance(params, dict) or not params:
             raise TypeError('Non-empty dictionary is expected')
         for param in params:
             if param not in ('to', 'from', 'group', 'ptr', 'reducer'):
                 raise TypeError('Unexpected parameter "{0}"'.format(param))
-        return function(self, params, *args, **kargs)
+        return function(self, params)
     return wrapper
 
 
