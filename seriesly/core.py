@@ -18,6 +18,9 @@ import json
 
 import requests
 
+from exceptions import verbose_error, only_existing, only_not_existing, \
+    correct_data, correct_params
+
 
 class HttpClient(object):
 
@@ -28,18 +31,22 @@ class HttpClient(object):
         """Initialize base URL"""
         self.base_url = 'http://{0}:{1}/'.format(host, port)
 
+    @verbose_error
     def get(self, url, params=None):
         """Send GET request and return the response object"""
         return requests.get(url=self.base_url + url, params=params)
 
+    @verbose_error
     def post(self, url, data=None, params=None):
         """Send POST request and return the response object"""
         return requests.post(url=self.base_url + url, data=data, params=params)
 
+    @verbose_error
     def put(self, url):
         """Send PUT request and return the response object"""
         return requests.put(url=self.base_url + url)
 
+    @verbose_error
     def delete(self, url):
         """Send DELETE request and return the response object"""
         return requests.delete(url=self.base_url + url)
@@ -50,6 +57,7 @@ class Seriesly(HttpClient):
     """seriesly connection and database manager
     """
 
+    @only_not_existing
     def create_db(self, dbname):
         """Create the `dbname` database"""
         self.put(dbname)
@@ -58,14 +66,17 @@ class Seriesly(HttpClient):
         """List all known databases on the server"""
         return self.get('_all_dbs').json
 
+    @only_existing
     def drop_db(self, dbname):
         """Delete the `dbname` database."""
         self.delete(dbname)
 
+    @only_existing
     def __getattr__(self, dbname):
         """Return an instance of the Database class"""
         return self.__getitem__(dbname)
 
+    @only_existing
     def __getitem__(self, dbname):
         """Return an instance of the Database class"""
         return Database(dbname=dbname, connection=self)
@@ -80,12 +91,14 @@ class Database(object):
         self.dbname = dbname
         self.connection = connection
 
+    @correct_data
     def append(self, data, timestamp=None):
         """Store a JSON document with a system-generated or user-specified
         timestamps"""
         params = timestamp and {'ts': timestamp} or {}
         return self.connection.post(self.dbname, json.dumps(data), params).text
 
+    @correct_params
     def query(self, params=None):
         """Querying data in seriesly database"""
         params = params or {}
