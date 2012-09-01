@@ -3,17 +3,16 @@ seriesly-python-client
 
 Python client for [seriesly](https://github.com/dustin/seriesly) database.
 
-
 Prerequisites
 =============
 
 * Python 2.6
 * pip
 
-Dependencies
+Installation
 ============
 
-    pip install requests
+    pip install seriesly
 
 API overview
 ============
