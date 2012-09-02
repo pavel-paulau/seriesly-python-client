@@ -32,3 +32,12 @@ API overview
     seriesly.drop_db('testdb')
 
 See [API reference](http://seriesly.readthedocs.org/en/latest/api.html) for details.
+
+Testing
+=======
+
+    pip install lettuce
+
+    pip install nose
+
+    lettuce
