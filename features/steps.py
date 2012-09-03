@@ -46,7 +46,8 @@ def reset_exceptions(scenario):
 @before.each_scenario
 def start_seriesly(scenario):
     temp_dir = mkdtemp()
-    world.seriesly = Popen(['seriesly', '--root={0}'.format(temp_dir)])
+    world.seriesly = Popen(['seriesly', '--root={0}'.format(temp_dir),
+                            '--flushDelay=0.1s'])
     time.sleep(1)
 
 
