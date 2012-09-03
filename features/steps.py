@@ -20,7 +20,7 @@ from tempfile import mkdtemp
 from subprocess import Popen
 
 from lettuce import step, world, before, after
-from nose.tools import assert_raises
+from nose.tools import assert_raises, assert_equals
 
 from seriesly import Seriesly
 from seriesly.exceptions import ExistingDatabase, NotExistingDatabase
@@ -77,6 +77,19 @@ def list_databases(step):
     world.dbs = world.client.list_dbs()
 
 
+@step(u'I append key "(.*)" with value (.*) to "(.*)" database')
+def append_data(step, key, value, dbname):
+    doc = {key: int(value)}
+    world.response = world.client[dbname].append(doc)
+
+
+@step(u'I query that value "(.*)" from "(.*)" database using reducer "(.*)"')
+def query_data(step, value, dbname, reducer):
+    time.sleep(0.25)
+    params = {'group': 3600, 'ptr': '/{0}'.format(value), 'reducer': reducer}
+    world.response = world.client[dbname].query(params=params, format='json')
+
+
 @step(u'I see "(.*)" in that list')
 def db_exist(step, dbname):
     assert dbname in world.dbs
@@ -90,3 +103,13 @@ def db_not_exist(step, dbname):
 @step(u'I get "(.*)" exception')
 def raise_exception(step, exception):
     assert isinstance(world.exceptions[-1], eval(exception))
+
+
+@step(u'I get response "(.*)"')
+def get_response(step, response):
+    assert_equals(world.response, response)
+
+
+@step(u'I get value (.*) in query result')
+def get_response(step, value):
+    assert_equals(world.response.values()[-1][-1], value)
