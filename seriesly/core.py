@@ -99,7 +99,11 @@ class Database(object):
         return self.connection.post(self.dbname, json.dumps(data), params).text
 
     @correct_params
-    def query(self, params=None):
+    def query(self, params=None, format='json'):
         """Querying data in seriesly database"""
         params = params or {}
-        return self.connection.get(self.dbname + '/_query', params)
+        response = self.connection.get(self.dbname + '/_query', params)
+        if format == 'json':
+            return response.json
+        else:
+            return response.text
