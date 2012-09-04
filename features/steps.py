@@ -34,6 +34,19 @@ def read_config():
 
 
 @before.all
+def start_seriesly():
+    temp_dir = mkdtemp()
+    world.seriesly = Popen(['seriesly', '--root={0}'.format(temp_dir),
+                            '--flushDelay=0.1s'])
+    time.sleep(1)
+
+
+@after.all
+def stop_seriesly(total):
+    world.seriesly.kill()
+
+
+@before.all
 def init_client():
     world.client = Seriesly(host=world.config.get('database', 'host'),
                             port=world.config.get('database', 'port'))
@@ -44,17 +57,10 @@ def reset_exceptions(scenario):
     world.exceptions = list()
 
 
-@before.each_scenario
-def start_seriesly(scenario):
-    temp_dir = mkdtemp()
-    world.seriesly = Popen(['seriesly', '--root={0}'.format(temp_dir),
-                            '--flushDelay=0.1s'])
-    time.sleep(1)
-
-
 @after.each_scenario
-def stop_seriesly(feature):
-    world.seriesly.kill()
+def drop_all_dbs(scenario):
+    for db in world.client.list_dbs():
+        world.client.drop_db(db)
 
 
 @step(u'I create database named "(.*)"')
