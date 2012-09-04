@@ -99,9 +99,8 @@ class Database(object):
         return self.connection.post(self.dbname, json.dumps(data), params).text
 
     @correct_params
-    def query(self, params=None, format='json'):
+    def query(self, params, format='json'):
         """Querying data in seriesly database"""
-        params = params or {}
         response = self.connection.get(self.dbname + '/_query', params)
         if response.status_code != requests.codes.ok:
             raise BadResponse(response.text)
