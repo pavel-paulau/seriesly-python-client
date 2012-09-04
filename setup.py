@@ -19,7 +19,7 @@ from setuptools import setup
 
 setup(
     name="seriesly",
-    version="0.1",
+    version="0.2",
     description="Python client for seriesly database.",
     author="Couchbase, Inc.",
     author_email="pavel.paulau@couchbase.com",
