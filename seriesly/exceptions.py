@@ -101,3 +101,12 @@ class ExistingDatabase(Exception):
 
     def __str__(self):
         return 'Database "{0}" already exists'.format(self.dbname)
+
+
+class BadResponse(Exception):
+
+    def __init__(self, err_message):
+        self.err_message = err_message
+
+    def __str__(self):
+        return self.err_message

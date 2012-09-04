@@ -19,7 +19,7 @@ import json
 import requests
 
 from exceptions import verbose_error, only_existing, only_not_existing, \
-    correct_data, correct_params
+    correct_data, correct_params, BadResponse
 
 
 class HttpClient(object):
@@ -103,6 +103,9 @@ class Database(object):
         """Querying data in seriesly database"""
         params = params or {}
         response = self.connection.get(self.dbname + '/_query', params)
+        if response.status_code != requests.codes.ok:
+            raise BadResponse(response.text)
+
         if format == 'json':
             return response.json
         else:

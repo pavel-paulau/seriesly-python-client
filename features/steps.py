@@ -23,7 +23,8 @@ from lettuce import step, world, before, after
 from nose.tools import assert_raises, assert_equals
 
 from seriesly import Seriesly
-from seriesly.exceptions import ExistingDatabase, NotExistingDatabase
+from seriesly.exceptions import ExistingDatabase, NotExistingDatabase,\
+    BadResponse
 
 
 @before.all
@@ -87,7 +88,11 @@ def append_data(step, key, value, dbname):
 def query_data(step, value, dbname, reducer):
     time.sleep(0.25)
     params = {'group': 3600, 'ptr': '/{0}'.format(value), 'reducer': reducer}
-    world.response = world.client[dbname].query(params=params, format='json')
+    try:
+        world.response = world.client[dbname].query(params=params,
+                                                    format='json')
+    except Exception, error:
+        world.exceptions.append(error)
 
 
 @step(u'I see "(.*)" in that list')
