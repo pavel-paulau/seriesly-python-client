@@ -59,16 +59,16 @@ class Seriesly(HttpClient):
 
     @only_not_existing
     def create_db(self, dbname):
-        """Create the `dbname` database"""
+        """Create the 'dbname' database"""
         self.put(dbname)
 
     def list_dbs(self):
-        """List all known databases on the server"""
+        """Return a list of all known database names on the server"""
         return self.get('_all_dbs').json
 
     @only_existing
     def drop_db(self, dbname):
-        """Delete the `dbname` database."""
+        """Delete the 'dbname' database."""
         self.delete(dbname)
 
     @only_existing
@@ -94,13 +94,25 @@ class Database(object):
     @correct_data
     def append(self, data, timestamp=None):
         """Store a JSON document with a system-generated or user-specified
-        timestamps"""
+        timestamps.
+        Return a response body as string.
+
+        data -- arbitrary data dictionary
+        timestamp -- user-specified timestamp in one of supported format
+        """
         params = timestamp and {'ts': timestamp} or {}
         return self.connection.post(self.dbname, json.dumps(data), params).text
 
     @correct_params
     def query(self, params, format='json'):
-        """Querying data in seriesly database"""
+        """Querying data in seriesly database.
+        Return a response body as string or dictionary.
+
+        params -- dictionary with query parameters (only 'to', 'from', 'group',
+        'ptr' and 'reducer' are supported so far). The dictionary values can
+        be lists for representing multivalued query parameters.
+        format -- format of query response, 'text' or 'json'
+        """
         response = self.connection.get(self.dbname + '/_query', params)
         if response.status_code != requests.codes.ok:
             raise BadResponse(response.text)
