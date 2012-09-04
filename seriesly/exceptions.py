@@ -52,30 +52,6 @@ def only_not_existing(function):
     return wrapper
 
 
-def correct_data(function):
-    """Check data type"""
-    @wraps(function)
-    def wrapper(self, data, *args, **kargs):
-        if not isinstance(data, dict) or not data:
-            raise TypeError('Non-empty dictionary is expected')
-        else:
-            return function(self, data, *args, **kargs)
-    return wrapper
-
-
-def correct_params(function):
-    """Check type of container and names of parameters"""
-    @wraps(function)
-    def wrapper(self, params, format):
-        if not isinstance(params, dict) or not params:
-            raise TypeError('Non-empty dictionary is expected')
-        for param in params:
-            if param not in ('to', 'from', 'group', 'ptr', 'reducer'):
-                raise TypeError('Unexpected parameter "{0}"'.format(param))
-        return function(self, params, format)
-    return wrapper
-
-
 class ConnectionError(Exception):
 
     def __init__(self, base_url):

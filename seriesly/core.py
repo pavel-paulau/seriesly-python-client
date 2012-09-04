@@ -19,7 +19,7 @@ import json
 import requests
 
 from exceptions import verbose_error, only_existing, only_not_existing, \
-    correct_data, correct_params, BadResponse
+    BadResponse
 
 
 class HttpClient(object):
@@ -91,7 +91,6 @@ class Database(object):
         self.dbname = dbname
         self.connection = connection
 
-    @correct_data
     def append(self, data, timestamp=None):
         """Store a JSON document with a system-generated or user-specified
         timestamps.
@@ -100,10 +99,12 @@ class Database(object):
         data -- arbitrary data dictionary
         timestamp -- user-specified timestamp in one of supported format
         """
+        if not isinstance(data, dict) or not data:
+            raise TypeError('Non-empty dictionary is expected')
+
         params = timestamp and {'ts': timestamp} or {}
         return self.connection.post(self.dbname, json.dumps(data), params).text
 
-    @correct_params
     def query(self, params, format='json'):
         """Querying data in seriesly database.
         Return a response body as string or dictionary.
@@ -113,6 +114,12 @@ class Database(object):
         be lists for representing multivalued query parameters.
         format -- format of query response, 'text' or 'json'
         """
+        if not isinstance(params, dict) or not params:
+            raise TypeError('Non-empty dictionary is expected')
+        for param in params:
+            if param not in ('to', 'from', 'group', 'ptr', 'reducer'):
+                raise TypeError('Unexpected parameter "{0}"'.format(param))
+
         response = self.connection.get(self.dbname + '/_query', params)
         if response.status_code != requests.codes.ok:
             raise BadResponse(response.text)
