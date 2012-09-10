@@ -29,6 +29,7 @@ setup(
     url="http://www.couchbase.com/",
     license="LICENSE",
     keywords=["encoding", "i18n", "xml"],
+    packages=["seriesly"],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.6",
