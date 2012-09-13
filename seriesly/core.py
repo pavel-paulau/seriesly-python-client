@@ -92,8 +92,8 @@ def formatter(method):
         if response.status_code != requests.codes.ok:
             raise BadResponse(response.text)
 
-        frmt = kargs.get('frmt', None) or ('text' in args and 'text') or 'json'
-        if frmt == 'json':
+        frmt = kargs.get('frmt', None) or ('text' in args and 'text') or 'dict'
+        if frmt == 'dict':
             return response.json
         else:
             return response.text
@@ -131,7 +131,7 @@ class Database(object):
         params -- dictionary with query parameters (only 'to', 'from', 'group',
         'ptr' and 'reducer' are supported so far). The dictionary values can
         be lists for representing multivalued query parameters.
-        format -- format of query response, 'text' or 'json'
+        format -- format of query response, 'text' or 'dict'
         """
         if not isinstance(params, dict) or not params:
             raise BadRequest('Non-empty dictionary is expected')
@@ -147,7 +147,7 @@ class Database(object):
         Return a response body as string or dictionary.
 
         timestamp -- timestamp of document.
-        format -- format of response, 'text' or 'json'
+        format -- format of response, 'text' or 'dict'
         """
         return self.connection.get(self.dbname + '/' + timestamp)
 
@@ -156,6 +156,6 @@ class Database(object):
         """Retrieve all documents from database.
         Return a response body as string or dictionary.
 
-        format -- format of response, 'text' or 'json'
+        format -- format of response, 'text' or 'dict'
         """
         return self.connection.get(self.dbname + '/_all')
