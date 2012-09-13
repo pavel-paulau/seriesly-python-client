@@ -142,3 +142,16 @@ class Database(object):
             return response.json
         else:
             return response.text
+
+    def get_all(self, format='json'):
+        """Retrieve all documents from database.
+        Return a response body as string or dictionary.
+
+        format -- format of response, 'text' or 'json'
+        """
+        response = self.connection.get(self.dbname + '/_all')
+
+        if format == 'json':
+            return response.json
+        else:
+            return response.text
