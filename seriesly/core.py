@@ -128,3 +128,17 @@ class Database(object):
             return response.json
         else:
             return response.text
+
+    def get_one(self, timestamp, format='json'):
+        """Retrieve individual document from database.
+        Return a response body as string or dictionary.
+
+        timestamp -- timestamp of document.
+        format -- format of response, 'text' or 'json'
+        """
+        response = self.connection.get(self.dbname + '/' + timestamp)
+
+        if format == 'json':
+            return response.json
+        else:
+            return response.text
