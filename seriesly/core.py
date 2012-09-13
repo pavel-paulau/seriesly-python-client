@@ -138,7 +138,7 @@ class Database(object):
         return self._connection._post(self._dbname, json.dumps(data), params).text
 
     @formatter
-    def query(self, params, frmt='json'):
+    def query(self, params, frmt='dict'):
         """Querying data in seriesly database.
         Return a response body as string or dictionary.
 
@@ -156,7 +156,7 @@ class Database(object):
         return self._connection._get(self._dbname + '/_query', params)
 
     @formatter
-    def get_one(self, timestamp, frmt='json'):
+    def get_one(self, timestamp, frmt='dict'):
         """Retrieve individual document from database.
         Return a response body as string or dictionary.
 
@@ -166,7 +166,7 @@ class Database(object):
         return self._connection._get(self._dbname + '/' + timestamp)
 
     @formatter
-    def get_all(self, frmt='json'):
+    def get_all(self, frmt='dict'):
         """Retrieve all documents from database.
         Return a response body as string or dictionary.
 
