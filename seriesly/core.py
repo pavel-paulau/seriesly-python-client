@@ -33,22 +33,22 @@ class HttpClient(object):
         self.base_url = 'http://{0}:{1}/'.format(host, port)
 
     @verbose_error
-    def get(self, url, params=None):
+    def _get(self, url, params=None):
         """Send GET request and return the response object"""
         return requests.get(url=self.base_url + url, params=params)
 
     @verbose_error
-    def post(self, url, data=None, params=None):
+    def _post(self, url, data=None, params=None):
         """Send POST request and return the response object"""
         return requests.post(url=self.base_url + url, data=data, params=params)
 
     @verbose_error
-    def put(self, url):
+    def _put(self, url):
         """Send PUT request and return the response object"""
         return requests.put(url=self.base_url + url)
 
     @verbose_error
-    def delete(self, url):
+    def _delete(self, url):
         """Send DELETE request and return the response object"""
         return requests.delete(url=self.base_url + url)
 
@@ -61,16 +61,16 @@ class Seriesly(HttpClient):
     @only_not_existing
     def create_db(self, dbname):
         """Create the 'dbname' database"""
-        self.put(dbname)
+        self._put(dbname)
 
     def list_dbs(self):
         """Return a list of all known database names on the server"""
-        return self.get('_all_dbs').json
+        return self._get('_all_dbs').json
 
     @only_existing
     def drop_db(self, dbname):
         """Delete the 'dbname' database."""
-        self.delete(dbname)
+        self._delete(dbname)
 
     @only_existing
     def __getattr__(self, dbname):
@@ -89,8 +89,8 @@ class Database(object):
     """
 
     def __init__(self, dbname, connection):
-        self.dbname = dbname
-        self.connection = connection
+        self._dbname = dbname
+        self._connection = connection
 
     def append(self, data, timestamp=None):
         """Store a JSON document with a system-generated or user-specified
@@ -104,7 +104,7 @@ class Database(object):
             raise BadRequest('Non-empty dictionary is expected')
 
         params = timestamp and {'ts': timestamp} or {}
-        return self.connection.post(self.dbname, json.dumps(data), params).text
+        return self._connection._post(self._dbname, json.dumps(data), params).text
 
     @formatter
     def query(self, params, frmt='json'):
@@ -122,7 +122,7 @@ class Database(object):
             if param not in ('to', 'from', 'group', 'ptr', 'reducer'):
                 raise BadRequest('Unexpected parameter "{0}"'.format(param))
 
-        return self.connection.get(self.dbname + '/_query', params)
+        return self._connection._get(self._dbname + '/_query', params)
 
     @formatter
     def get_one(self, timestamp, frmt='json'):
@@ -132,7 +132,7 @@ class Database(object):
         timestamp -- timestamp of document.
         format -- format of response, 'text' or 'dict'
         """
-        return self.connection.get(self.dbname + '/' + timestamp)
+        return self._connection._get(self._dbname + '/' + timestamp)
 
     @formatter
     def get_all(self, frmt='json'):
@@ -141,4 +141,4 @@ class Database(object):
 
         format -- format of response, 'text' or 'dict'
         """
-        return self.connection.get(self.dbname + '/_all')
+        return self._connection._get(self._dbname + '/_all')
