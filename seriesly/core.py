@@ -29,27 +29,46 @@ class HttpClient(object):
     """
 
     def __init__(self, host='127.0.0.1', port=3133):
-        """Initialize base URL"""
+        """Initialize base URL.
+
+        :param host: hostname or IP address
+        :param port: port
+        """
         self.base_url = 'http://{0}:{1}/'.format(host, port)
 
     @verbose_error
     def _get(self, url, params=None):
-        """Send GET request and return the response object"""
+        """Send GET request and return the response object.
+
+        :param url: request URL
+        :param params: request params
+        """
         return requests.get(url=self.base_url + url, params=params)
 
     @verbose_error
     def _post(self, url, data=None, params=None):
-        """Send POST request and return the response object"""
+        """Send POST request and return the response object.
+
+        :param url: request URL
+        :param data: request data
+        :param params: request params
+        """
         return requests.post(url=self.base_url + url, data=data, params=params)
 
     @verbose_error
     def _put(self, url):
-        """Send PUT request and return the response object"""
+        """Send PUT request and return the response object.
+
+        :param url: request URL
+        """
         return requests.put(url=self.base_url + url)
 
     @verbose_error
     def _delete(self, url):
-        """Send DELETE request and return the response object"""
+        """Send DELETE request and return the response object.
+
+        :param url: request URL
+        """
         return requests.delete(url=self.base_url + url)
 
 
@@ -60,7 +79,10 @@ class Seriesly(HttpClient):
 
     @only_not_existing
     def create_db(self, dbname):
-        """Create the 'dbname' database"""
+        """Create the 'dbname' database.
+
+        :param dbname: database name
+        """
         self._put(dbname)
 
     def list_dbs(self):
@@ -69,17 +91,26 @@ class Seriesly(HttpClient):
 
     @only_existing
     def drop_db(self, dbname):
-        """Delete the 'dbname' database."""
+        """Delete the 'dbname' database.
+
+        :param dbname: database name
+        """
         self._delete(dbname)
 
     @only_existing
     def __getattr__(self, dbname):
-        """Return an instance of the Database class"""
+        """Return an instance of the Database class.
+
+        :param dbname: database name
+        """
         return self.__getitem__(dbname)
 
     @only_existing
     def __getitem__(self, dbname):
-        """Return an instance of the Database class"""
+        """Return an instance of the Database class.
+
+        :param dbname: database name
+        """
         return Database(dbname=dbname, connection=self)
 
 
@@ -97,8 +128,8 @@ class Database(object):
         timestamps.
         Return a response body as string.
 
-        data -- arbitrary data dictionary
-        timestamp -- user-specified timestamp in one of supported format
+        :param data: arbitrary data dictionary
+        :param timestamp: user-specified timestamp in one of supported format
         """
         if not isinstance(data, dict) or not data:
             raise BadRequest('Non-empty dictionary is expected')
@@ -111,10 +142,10 @@ class Database(object):
         """Querying data in seriesly database.
         Return a response body as string or dictionary.
 
-        params -- dictionary with query parameters (only 'to', 'from', 'group',
-        'ptr' and 'reducer' are supported so far). The dictionary values can
-        be lists for representing multivalued query parameters.
-        format -- format of query response, 'text' or 'dict'
+        :param params: dictionary with query parameters (only 'to', 'from',   \
+        'group', 'ptr' and 'reducer' are supported so far). The dictionary    \
+        values can be lists for representing multivalued query parameters.
+        :param frmt: format of query response, 'text' or 'dict'
         """
         if not isinstance(params, dict) or not params:
             raise BadRequest('Non-empty dictionary is expected')
@@ -129,8 +160,8 @@ class Database(object):
         """Retrieve individual document from database.
         Return a response body as string or dictionary.
 
-        timestamp -- timestamp of document.
-        format -- format of response, 'text' or 'dict'
+        :param timestamp: timestamp of document.
+        :param frmt: format of response, 'text' or 'dict'
         """
         return self._connection._get(self._dbname + '/' + timestamp)
 
@@ -139,6 +170,6 @@ class Database(object):
         """Retrieve all documents from database.
         Return a response body as string or dictionary.
 
-        format -- format of response, 'text' or 'dict'
+        :param frmt: format of response, 'text' or 'dict'
         """
         return self._connection._get(self._dbname + '/_all')
