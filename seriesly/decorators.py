@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from functools import wraps
+from decorator import decorator
 
 import requests
 
@@ -22,51 +22,43 @@ from seriesly.exceptions import BadResponse, ConnectionError, \
     NotExistingDatabase, ExistingDatabase
 
 
-def formatter(method):
+@decorator
+def formatter(method, *args, **kargs):
     """Check response status code and return response in appropriate format"""
-    @wraps(method)
-    def wrapper(*args, **kargs):
-        response = method(*args, **kargs)
+    response = method(*args, **kargs)
 
-        if response.status_code != requests.codes.ok:
-            raise BadResponse(response.text)
+    if response.status_code != requests.codes.ok:
+        raise BadResponse(response.text)
 
-        frmt = kargs.get('frmt', None) or ('text' in args and 'text') or 'dict'
-        if frmt == 'dict':
-            return response.json
-        else:
-            return response.text
-    return wrapper
+    frmt = kargs.get('frmt', None) or ('text' in args and 'text') or 'dict'
+    if frmt == 'dict':
+        return response.json
+    else:
+        return response.text
 
 
-def verbose_error(function):
+@decorator
+def verbose_error(method, self, *args, **kargs):
     """Ensure more verbose error message in case of connection error"""
-    @wraps(function)
-    def wrapper(self, url, *args, **kargs):
-        try:
-            return function(self, url, *args, **kargs)
-        except requests.exceptions.ConnectionError:
-            raise ConnectionError(self.base_url)
-    return wrapper
+    try:
+        return method(self, *args, **kargs)
+    except requests.exceptions.ConnectionError:
+        raise ConnectionError(self.base_url)
 
 
-def only_existing(function):
+@decorator
+def only_existing(method, self, dbname):
     """Allow operations only on existing databases"""
-    @wraps(function)
-    def wrapper(self, dbname):
-        if dbname not in self.list_dbs():
-            raise NotExistingDatabase(dbname)
-        else:
-            return function(self, dbname)
-    return wrapper
+    if dbname not in self.list_dbs():
+        raise NotExistingDatabase(dbname)
+    else:
+        return method(self, dbname)
 
 
-def only_not_existing(function):
+@decorator
+def only_not_existing(method, self, dbname):
     """Allow operations only on not existing databases."""
-    @wraps(function)
-    def wrapper(self, dbname):
-        if dbname in self.list_dbs():
-            raise ExistingDatabase(dbname)
-        else:
-            return function(self, dbname)
-    return wrapper
+    if dbname in self.list_dbs():
+        raise ExistingDatabase(dbname)
+    else:
+        return method(self, dbname)
