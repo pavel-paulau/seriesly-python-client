@@ -135,7 +135,10 @@ class Database(object):
             raise BadRequest('Non-empty dictionary is expected')
 
         params = timestamp and {'ts': timestamp} or {}
-        return self._connection._post(self._dbname, json.dumps(data), params).text
+        response = self._connection._post(self._dbname,
+                                          json.dumps(data),
+                                          params)
+        return response.text
 
     @formatter
     def query(self, params, frmt='dict'):
