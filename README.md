@@ -29,6 +29,10 @@ API overview
 
     seriesly['testdb'].query(params={})
 
+    seriesly.testdb.get_one(timestamp='2005-07-10T02:38:46Z')
+
+    seriesly['testdb'].get_all()
+
     seriesly.drop_db('testdb')
 
 See [API reference](http://seriesly.readthedocs.org/en/latest/api.html) for details.
