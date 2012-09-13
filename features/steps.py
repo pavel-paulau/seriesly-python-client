@@ -95,8 +95,7 @@ def query_data(step, value, dbname, reducer):
     time.sleep(0.25)
     params = {'group': 3600, 'ptr': '/{0}'.format(value), 'reducer': reducer}
     try:
-        world.response = world.client[dbname].query(params=params,
-                                                    format='json')
+        world.response = world.client[dbname].query(params=params, frmt='json')
     except Exception, error:
         world.exceptions.append(error)
 

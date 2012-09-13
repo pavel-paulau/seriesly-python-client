@@ -92,9 +92,7 @@ def formatter(method):
         if response.status_code != requests.codes.ok:
             raise BadResponse(response.text)
 
-        frmt = kargs.get('format', None) or \
-            ('text' in args and 'text') or \
-            'json'
+        frmt = kargs.get('frmt', None) or ('text' in args and 'text') or 'json'
         if frmt == 'json':
             return response.json
         else:
@@ -126,7 +124,7 @@ class Database(object):
         return self.connection.post(self.dbname, json.dumps(data), params).text
 
     @formatter
-    def query(self, params, format='json'):
+    def query(self, params, frmt='json'):
         """Querying data in seriesly database.
         Return a response body as string or dictionary.
 
@@ -144,7 +142,7 @@ class Database(object):
         return self.connection.get(self.dbname + '/_query', params)
 
     @formatter
-    def get_one(self, timestamp, format='json'):
+    def get_one(self, timestamp, frmt='json'):
         """Retrieve individual document from database.
         Return a response body as string or dictionary.
 
@@ -154,7 +152,7 @@ class Database(object):
         return self.connection.get(self.dbname + '/' + timestamp)
 
     @formatter
-    def get_all(self, format='json'):
+    def get_all(self, frmt='json'):
         """Retrieve all documents from database.
         Return a response body as string or dictionary.
 
