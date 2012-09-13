@@ -18,8 +18,8 @@ from functools import wraps
 
 import requests
 
-from exceptions import BadResponse, ConnectionError, NotExistingDatabase,\
-    ExistingDatabase
+from seriesly.exceptions import BadResponse, ConnectionError, \
+    NotExistingDatabase, ExistingDatabase
 
 
 def formatter(method):

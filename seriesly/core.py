@@ -18,9 +18,9 @@ import json
 
 import requests
 
-from exceptions import BadRequest
-from decorators import verbose_error, only_existing, only_not_existing, \
-    formatter
+from seriesly.exceptions import BadRequest
+from seriesly.decorators import verbose_error, only_existing, \
+    only_not_existing, formatter
 
 
 class HttpClient(object):
