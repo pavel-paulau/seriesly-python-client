@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 import json
+from functools import wraps
 
 import requests
 
@@ -82,6 +83,25 @@ class Seriesly(HttpClient):
         return Database(dbname=dbname, connection=self)
 
 
+def formatter(method):
+    """Check response status code and return response in appropriate format"""
+    @wraps(method)
+    def wrapper(*args, **kargs):
+        response = method(*args, **kargs)
+
+        if response.status_code != requests.codes.ok:
+            raise BadResponse(response.text)
+
+        frmt = kargs.get('format', None) or \
+            ('text' in args and 'text') or \
+            'json'
+        if frmt == 'json':
+            return response.json
+        else:
+            return response.text
+    return wrapper
+
+
 class Database(object):
 
     """Datastore
@@ -105,6 +125,7 @@ class Database(object):
         params = timestamp and {'ts': timestamp} or {}
         return self.connection.post(self.dbname, json.dumps(data), params).text
 
+    @formatter
     def query(self, params, format='json'):
         """Querying data in seriesly database.
         Return a response body as string or dictionary.
@@ -120,15 +141,9 @@ class Database(object):
             if param not in ('to', 'from', 'group', 'ptr', 'reducer'):
                 raise BadRequest('Unexpected parameter "{0}"'.format(param))
 
-        response = self.connection.get(self.dbname + '/_query', params)
-        if response.status_code != requests.codes.ok:
-            raise BadResponse(response.text)
+        return self.connection.get(self.dbname + '/_query', params)
 
-        if format == 'json':
-            return response.json
-        else:
-            return response.text
-
+    @formatter
     def get_one(self, timestamp, format='json'):
         """Retrieve individual document from database.
         Return a response body as string or dictionary.
@@ -136,22 +151,13 @@ class Database(object):
         timestamp -- timestamp of document.
         format -- format of response, 'text' or 'json'
         """
-        response = self.connection.get(self.dbname + '/' + timestamp)
+        return self.connection.get(self.dbname + '/' + timestamp)
 
-        if format == 'json':
-            return response.json
-        else:
-            return response.text
-
+    @formatter
     def get_all(self, format='json'):
         """Retrieve all documents from database.
         Return a response body as string or dictionary.
 
         format -- format of response, 'text' or 'json'
         """
-        response = self.connection.get(self.dbname + '/_all')
-
-        if format == 'json':
-            return response.json
-        else:
-            return response.text
+        return self.connection.get(self.dbname + '/_all')
