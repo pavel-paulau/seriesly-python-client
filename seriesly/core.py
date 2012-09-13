@@ -15,12 +15,12 @@
 # limitations under the License.
 #
 import json
-from functools import wraps
 
 import requests
 
-from exceptions import verbose_error, only_existing, only_not_existing, \
-    BadResponse, BadRequest
+from exceptions import BadRequest
+from decorators import verbose_error, only_existing, only_not_existing, \
+    formatter
 
 
 class HttpClient(object):
@@ -81,23 +81,6 @@ class Seriesly(HttpClient):
     def __getitem__(self, dbname):
         """Return an instance of the Database class"""
         return Database(dbname=dbname, connection=self)
-
-
-def formatter(method):
-    """Check response status code and return response in appropriate format"""
-    @wraps(method)
-    def wrapper(*args, **kargs):
-        response = method(*args, **kargs)
-
-        if response.status_code != requests.codes.ok:
-            raise BadResponse(response.text)
-
-        frmt = kargs.get('frmt', None) or ('text' in args and 'text') or 'dict'
-        if frmt == 'dict':
-            return response.json
-        else:
-            return response.text
-    return wrapper
 
 
 class Database(object):

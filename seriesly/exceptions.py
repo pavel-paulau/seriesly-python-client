@@ -14,44 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from functools import wraps
-
-import requests
-
-
-def verbose_error(function):
-    """Ensure more verbose error message in case of connection error"""
-    @wraps(function)
-    def wrapper(self, url, *args, **kargs):
-        try:
-            return function(self, url, *args, **kargs)
-        except requests.exceptions.ConnectionError:
-            raise ConnectionError(self.base_url)
-    return wrapper
-
-
-def only_existing(function):
-    """Allow operations only on existing databases"""
-    @wraps(function)
-    def wrapper(self, dbname):
-        if dbname not in self.list_dbs():
-            raise NotExistingDatabase(dbname)
-        else:
-            return function(self, dbname)
-    return wrapper
-
-
-def only_not_existing(function):
-    """Allow operations only on not existing databases."""
-    @wraps(function)
-    def wrapper(self, dbname):
-        if dbname in self.list_dbs():
-            raise ExistingDatabase(dbname)
-        else:
-            return function(self, dbname)
-    return wrapper
-
-
 class ConnectionError(Exception):
 
     def __init__(self, base_url):
