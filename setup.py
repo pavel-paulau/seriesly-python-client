@@ -22,7 +22,7 @@ setup(
     version="0.3.1",
     description="Python client for seriesly database.",
     author="Couchbase, Inc.",
-    author_email="pavel.paulau@couchbase.com",
+    author_email="pavel.paulau@gmail.com",
     install_requires=["requests", "decorator"],
     setup_requires=[],
     tests_require=[],
