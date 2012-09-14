@@ -176,3 +176,9 @@ class Database(object):
         :param frmt: format of response, 'text' or 'dict'
         """
         return self._connection._get(self._dbname + '/_all')
+
+    def get_all_keys(self):
+        """Return a set of all unique keys in database."""
+        all_docs = self.get_all()
+        return set(key for doc in all_docs.itervalues()
+                       for key in doc.iterkeys())
