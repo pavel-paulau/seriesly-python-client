@@ -87,7 +87,7 @@ class Seriesly(HttpClient):
 
     def list_dbs(self):
         """Return a list of all known database names on the server"""
-        return self._get('_all_dbs').json
+        return self._get('_all_dbs').json()
 
     @only_existing
     def drop_db(self, dbname):

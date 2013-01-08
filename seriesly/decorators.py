@@ -32,7 +32,7 @@ def formatter(method, *args, **kargs):
 
     frmt = kargs.get('frmt', None) or ('text' in args and 'text') or 'dict'
     if frmt == 'dict':
-        return response.json
+        return response.json()
     else:
         return response.text
 
