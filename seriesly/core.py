@@ -146,14 +146,15 @@ class Database(object):
         Return a response body as string or dictionary.
 
         :param params: dictionary with query parameters (only 'to', 'from',   \
-        'group', 'ptr' and 'reducer' are supported so far). The dictionary    \
-        values can be lists for representing multivalued query parameters.
+        'group', 'ptr' and 'reducer', 'f' and 'fv' are supported so far). The \
+        dictionary values can be lists for representing multivalued query     \
+        parameters.
         :param frmt: format of query response, 'text' or 'dict'
         """
         if not isinstance(params, dict) or not params:
             raise BadRequest('Non-empty dictionary is expected')
         for param in params:
-            if param not in ('to', 'from', 'group', 'ptr', 'reducer'):
+            if param not in ('to', 'from', 'group', 'ptr', 'reducer', 'f', 'fv'):
                 raise BadRequest('Unexpected parameter "{0}"'.format(param))
 
         return self._connection._get(self._dbname + '/_query', params)
