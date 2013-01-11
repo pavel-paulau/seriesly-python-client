@@ -97,13 +97,15 @@ class Seriesly(HttpClient):
         """
         self._delete(dbname)
 
-    @only_existing
     def __getattr__(self, dbname):
         """Return an instance of the Database class.
 
         :param dbname: database name
         """
-        return self.__getitem__(dbname)
+        if dbname == "__name__":
+            return super(Seriesly, self).__name__
+        else:
+            return self.__getitem__(dbname)
 
     @only_existing
     def __getitem__(self, dbname):
