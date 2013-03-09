@@ -41,7 +41,11 @@ def formatter(method, *args, **kargs):
 def verbose_error(method, self, *args, **kargs):
     """Ensure more verbose error message in case of connection error"""
     try:
-        return method(self, *args, **kargs)
+        response = method(self, *args, **kargs)
+        if response.status_code == 500:
+            raise Exception(response.text)
+        else:
+            return response
     except requests.exceptions.ConnectionError:
         raise ConnectionError(self.base_url)
 

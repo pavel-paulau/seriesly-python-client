@@ -106,7 +106,6 @@ class Seriesly(HttpClient):
         else:
             return self.__getitem__(dbname)
 
-    @only_existing
     def __getitem__(self, dbname):
         """Return an instance of the Database class.
 
