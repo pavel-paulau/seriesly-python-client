@@ -134,11 +134,9 @@ class Database(object):
         if not isinstance(data, dict) or not data:
             raise BadRequest('Non-empty dictionary is expected')
 
+        url = self._dbname
         params = timestamp and {'ts': timestamp} or {}
-        response = self._connection._post(self._dbname,
-                                          json.dumps(data),
-                                          params)
-        return response.text
+        return self._connection._post(url, json.dumps(data), params).text
 
     @formatter
     def query(self, params, frmt='dict'):
@@ -157,7 +155,8 @@ class Database(object):
             if param not in ('to', 'from', 'group', 'ptr', 'reducer', 'f', 'fv'):
                 raise BadRequest('Unexpected parameter "{0}"'.format(param))
 
-        return self._connection._get(self._dbname + '/_query', params)
+        url = self._dbname + '/_query'
+        return self._connection._get(url, params)
 
     @formatter
     def get_one(self, timestamp, frmt='dict'):
@@ -176,10 +175,11 @@ class Database(object):
 
         :param frmt: format of response, 'text' or 'dict'
         """
-        return self._connection._get(self._dbname + '/_all')
+        url = self._dbname + '/_all'
+        return self._connection._get(url)
 
     def get_all_keys(self):
         """Return a set of all unique keys in database."""
         all_docs = self.get_all()
         return set(key for doc in all_docs.itervalues()
-                       for key in doc.iterkeys())
+                   for key in doc.iterkeys())
