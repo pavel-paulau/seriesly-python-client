@@ -151,9 +151,6 @@ class Database(object):
         """
         if not isinstance(params, dict) or not params:
             raise BadRequest('Non-empty dictionary is expected')
-        for param in params:
-            if param not in ('to', 'from', 'group', 'ptr', 'reducer', 'f', 'fv'):
-                raise BadRequest('Unexpected parameter "{0}"'.format(param))
 
         url = self._dbname + '/_query'
         return self._connection._get(url, params)
