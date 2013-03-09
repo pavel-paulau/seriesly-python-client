@@ -113,8 +113,7 @@ class Database(object):
 
     def append(self, data, timestamp=None):
         """Store a JSON document with a system-generated or user-specified
-        timestamps.
-        Return a response body as string.
+        timestamps. Return a response body as string.
 
         :param data: arbitrary data dictionary
         :param timestamp: user-specified timestamp in one of supported format
@@ -128,7 +127,7 @@ class Database(object):
 
     def query(self, params):
         """Querying data in seriesly database.
-        Return a response body as string or dictionary.
+        Return a response body as dictionary.
 
         :param params: dictionary with query parameters. The dictionary values \
         can be lists for representing multivalued query parameters.
@@ -141,7 +140,7 @@ class Database(object):
 
     def get_one(self, timestamp):
         """Retrieve individual document from database.
-        Return a response body as string or dictionary.
+        Return a response body as dictionary.
 
         :param timestamp: timestamp of document.
         """
@@ -149,7 +148,7 @@ class Database(object):
 
     def get_all(self):
         """Retrieve all documents from database.
-        Return a response body as string or dictionary.
+        Return a response body as dictionary.
         """
         url = self._dbname + '/_all'
         return self._connection._get(url).json()
