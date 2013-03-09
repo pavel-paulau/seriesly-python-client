@@ -8,7 +8,7 @@ from nose.tools import assert_raises, assert_equals
 
 from seriesly import Seriesly
 from seriesly.exceptions import ExistingDatabase, NotExistingDatabase,\
-    BadResponse
+    BadRequest
 
 
 @before.all
@@ -79,7 +79,7 @@ def query_data(step, value, dbname, reducer):
     time.sleep(0.25)
     params = {'group': 3600, 'ptr': '/{0}'.format(value), 'reducer': reducer}
     try:
-        world.response = world.client[dbname].query(params=params, frmt='dict')
+        world.response = world.client[dbname].query(params=params)
     except Exception, error:
         world.exceptions.append(error)
 

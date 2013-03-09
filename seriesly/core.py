@@ -1,9 +1,9 @@
 import requests
 import ujson as json
 
-from seriesly.exceptions import BadRequest
-from seriesly.decorators import verbose_error, only_existing, \
-    only_not_existing, formatter
+from seriesly.exceptions import BadRequest, NotExistingDatabase, \
+    ExistingDatabase
+from seriesly.decorators import verbose_error
 
 
 class HttpClient(object):
@@ -60,25 +60,29 @@ class Seriesly(HttpClient):
     """seriesly connection and database manager
     """
 
-    @only_not_existing
     def create_db(self, dbname):
         """Create the 'dbname' database.
 
         :param dbname: database name
         """
-        self._put(dbname)
+        if dbname not in self.list_dbs():
+            return self._put(dbname).text
+        else:
+            raise ExistingDatabase(dbname)
 
     def list_dbs(self):
         """Return a list of all known database names on the server"""
         return self._get('_all_dbs').json()
 
-    @only_existing
     def drop_db(self, dbname):
         """Delete the 'dbname' database.
 
         :param dbname: database name
         """
-        self._delete(dbname)
+        if dbname in self.list_dbs():
+            return self._delete(dbname).text
+        else:
+            raise NotExistingDatabase(dbname)
 
     def __getattr__(self, dbname):
         """Return an instance of the Database class.
@@ -122,39 +126,30 @@ class Database(object):
         params = timestamp and {'ts': timestamp} or {}
         return self._connection._post(url, json.dumps(data), params).text
 
-    @formatter
-    def query(self, params, frmt='dict'):
+    def query(self, params):
         """Querying data in seriesly database.
         Return a response body as string or dictionary.
 
-        :param params: dictionary with query parameters (only 'to', 'from',   \
-        'group', 'ptr' and 'reducer', 'f' and 'fv' are supported so far). The \
-        dictionary values can be lists for representing multivalued query     \
-        parameters.
-        :param frmt: format of query response, 'text' or 'dict'
+        :param params: dictionary with query parameters. The dictionary values \
+        can be lists for representing multivalued query parameters.
         """
         if not isinstance(params, dict) or not params:
             raise BadRequest('Non-empty dictionary is expected')
 
         url = self._dbname + '/_query'
-        return self._connection._get(url, params)
+        return self._connection._get(url, params).json()
 
-    @formatter
-    def get_one(self, timestamp, frmt='dict'):
+    def get_one(self, timestamp):
         """Retrieve individual document from database.
         Return a response body as string or dictionary.
 
         :param timestamp: timestamp of document.
-        :param frmt: format of response, 'text' or 'dict'
         """
-        return self._connection._get(self._dbname + '/' + timestamp)
+        return self._connection._get(self._dbname + '/' + timestamp).json()
 
-    @formatter
-    def get_all(self, frmt='dict'):
+    def get_all(self):
         """Retrieve all documents from database.
         Return a response body as string or dictionary.
-
-        :param frmt: format of response, 'text' or 'dict'
         """
         url = self._dbname + '/_all'
-        return self._connection._get(url)
+        return self._connection._get(url).json()

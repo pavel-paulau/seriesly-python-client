@@ -32,12 +32,3 @@ class BadRequest(Exception):
 
     def __str__(self):
         return self.err_message
-
-
-class BadResponse(Exception):
-
-    def __init__(self, err_message):
-        self.err_message = err_message
-
-    def __str__(self):
-        return self.err_message
