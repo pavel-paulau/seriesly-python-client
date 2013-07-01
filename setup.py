@@ -2,14 +2,13 @@ from setuptools import setup
 
 setup(
     name="seriesly",
-    version="0.5.2",
+    version="0.5.3",
     description="Python client for seriesly database",
     author="Pavel Paulau",
     author_email="pavel.paulau@gmail.com",
     install_requires=[
         "requests==1.2.0",
         "decorator",
-        "ujson",
     ],
     packages=[
         "seriesly",

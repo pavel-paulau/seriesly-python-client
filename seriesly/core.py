@@ -1,5 +1,5 @@
 import requests
-import ujson as json
+import json
 
 from seriesly.exceptions import BadRequest, NotExistingDatabase, \
     ExistingDatabase
