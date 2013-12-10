@@ -20,7 +20,7 @@ class HttpClient(object):
         self.base_url = 'http://{0}:{1}/'.format(host, port)
 
     @verbose_error
-    def _get(self, url, params=None):
+    def get(self, url, params=None):
         """Send GET request and return the response object.
 
         :param url: request URL
@@ -29,7 +29,7 @@ class HttpClient(object):
         return requests.get(url=self.base_url + url, params=params)
 
     @verbose_error
-    def _post(self, url, data=None, params=None):
+    def post(self, url, data=None, params=None):
         """Send POST request and return the response object.
 
         :param url: request URL
@@ -39,7 +39,7 @@ class HttpClient(object):
         return requests.post(url=self.base_url + url, data=data, params=params)
 
     @verbose_error
-    def _put(self, url):
+    def put(self, url):
         """Send PUT request and return the response object.
 
         :param url: request URL
@@ -47,7 +47,7 @@ class HttpClient(object):
         return requests.put(url=self.base_url + url)
 
     @verbose_error
-    def _delete(self, url):
+    def delete(self, url):
         """Send DELETE request and return the response object.
 
         :param url: request URL
@@ -66,13 +66,13 @@ class Seriesly(HttpClient):
         :param dbname: database name
         """
         if dbname not in self.list_dbs():
-            return self._put(dbname).text
+            return self.put(dbname).text
         else:
             raise ExistingDatabase(dbname)
 
     def list_dbs(self):
         """Return a list of all known database names on the server"""
-        return self._get('_all_dbs').json()
+        return self.get('_all_dbs').json()
 
     def drop_db(self, dbname):
         """Delete the 'dbname' database.
@@ -80,7 +80,7 @@ class Seriesly(HttpClient):
         :param dbname: database name
         """
         if dbname in self.list_dbs():
-            return self._delete(dbname).text
+            return self.delete(dbname).text
         else:
             raise NotExistingDatabase(dbname)
 
@@ -126,7 +126,7 @@ class Database(object):
 
         url = self._dbname
         params = timestamp and {'ts': timestamp} or {}
-        return self._connection._post(url, json.dumps(data), params).text
+        return self._connection.post(url, json.dumps(data), params).text
 
     def query(self, params):
         """Querying data in seriesly database.
@@ -139,7 +139,7 @@ class Database(object):
             raise BadRequest('Non-empty dictionary is expected')
 
         url = self._dbname + '/_query'
-        return self._connection._get(url, params).json()
+        return self._connection.get(url, params).json()
 
     def get_one(self, timestamp):
         """Retrieve individual document from database.
@@ -147,17 +147,17 @@ class Database(object):
 
         :param timestamp: timestamp of document.
         """
-        return self._connection._get(self._dbname + '/' + timestamp).json()
+        return self._connection.get(self._dbname + '/' + timestamp).json()
 
     def get_all(self):
         """Retrieve all documents from database.
         Return a response body as dictionary.
         """
         url = self._dbname + '/_all'
-        return self._connection._get(url).json()
+        return self._connection.get(url).json()
 
     def compact(self):
         """Trigger online database compactions
         """
         url = self._dbname + '/_compact'
-        return self._connection._post(url).json()
+        return self._connection.post(url).json()
