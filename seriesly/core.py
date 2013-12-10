@@ -155,3 +155,9 @@ class Database(object):
         """
         url = self._dbname + '/_all'
         return self._connection._get(url).json()
+
+    def compact(self):
+        """Trigger online database compactions
+        """
+        url = self._dbname + '/_compact'
+        return self._connection._post(url).json()
