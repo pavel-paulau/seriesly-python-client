@@ -99,10 +99,7 @@ class Seriesly(HttpClient):
 
         :param dbname: database name
         """
-        if dbname in self.list_dbs():
-            return Database(dbname=dbname, connection=self)
-        else:
-            raise NotExistingDatabase(dbname)
+        return Database(dbname=dbname, connection=self)
 
 
 class Database(object):
