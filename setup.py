@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="seriesly",
-    version="0.6.1",
+    version="0.6.2",
     description="Python client for seriesly database",
     author="Pavel Paulau",
     author_email="pavel.paulau@gmail.com",

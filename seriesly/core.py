@@ -18,6 +18,7 @@ class HttpClient(object):
         :param port: port
         """
         self.base_url = 'http://{0}:{1}/'.format(host, port)
+        self.session = requests.Session()
 
     @verbose_error
     def get(self, url, params=None):
@@ -26,7 +27,7 @@ class HttpClient(object):
         :param url: request URL
         :param params: request params
         """
-        return requests.get(url=self.base_url + url, params=params)
+        return self.session.get(url=self.base_url + url, params=params)
 
     @verbose_error
     def post(self, url, data=None, params=None):
@@ -36,7 +37,7 @@ class HttpClient(object):
         :param data: request data
         :param params: request params
         """
-        return requests.post(url=self.base_url + url, data=data, params=params)
+        return self.session.post(url=self.base_url + url, data=data, params=params)
 
     @verbose_error
     def put(self, url):
@@ -44,7 +45,7 @@ class HttpClient(object):
 
         :param url: request URL
         """
-        return requests.put(url=self.base_url + url)
+        return self.session.put(url=self.base_url + url)
 
     @verbose_error
     def delete(self, url):
@@ -52,7 +53,7 @@ class HttpClient(object):
 
         :param url: request URL
         """
-        return requests.delete(url=self.base_url + url)
+        return self.session.delete(url=self.base_url + url)
 
 
 class Seriesly(HttpClient):
