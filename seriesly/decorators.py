@@ -1,18 +1,29 @@
+import time
+
 from decorator import decorator
+from requests.exceptions import ConnectionError
 
-import requests
+from seriesly.exceptions import ConnectionError as _ConnectionError, BadRequest
 
-from seriesly.exceptions import ConnectionError, BadRequest
+
+MAX_RETRY = 5
+RETRY_DELAY = 5
 
 
 @decorator
-def verbose_error(method, self, *args, **kargs):
-    """Ensure more verbose error message in case of connection error"""
-    try:
-        response = method(self, *args, **kargs)
-        if response.status_code >= 400:
-            raise BadRequest(response.text)
+def handle_error(method, self, *args, **kargs):
+    """Gracefully handle request errors"""
+    error = ''
+    for _ in range(MAX_RETRY):
+        try:
+            response = method(self, *args, **kargs)
+        except ConnectionError as e:
+            error = e
+            time.sleep(RETRY_DELAY)
+            continue
         else:
-            return response
-    except requests.exceptions.ConnectionError:
-        raise ConnectionError(self.base_url)
+            if response.status_code >= 400:
+                raise BadRequest(response.text)
+            else:
+                return response
+    raise _ConnectionError(error)

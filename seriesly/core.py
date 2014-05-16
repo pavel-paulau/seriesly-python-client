@@ -3,7 +3,7 @@ import json
 
 from seriesly.exceptions import BadRequest, NotExistingDatabase, \
     ExistingDatabase
-from seriesly.decorators import verbose_error
+from seriesly.decorators import handle_error
 
 
 class HttpClient(object):
@@ -20,7 +20,7 @@ class HttpClient(object):
         self.base_url = 'http://{0}:{1}/'.format(host, port)
         self.session = requests.Session()
 
-    @verbose_error
+    @handle_error
     def get(self, url, params=None):
         """Send GET request and return the response object.
 
@@ -29,7 +29,7 @@ class HttpClient(object):
         """
         return self.session.get(url=self.base_url + url, params=params)
 
-    @verbose_error
+    @handle_error
     def post(self, url, data=None, params=None):
         """Send POST request and return the response object.
 
@@ -39,7 +39,7 @@ class HttpClient(object):
         """
         return self.session.post(url=self.base_url + url, data=data, params=params)
 
-    @verbose_error
+    @handle_error
     def put(self, url):
         """Send PUT request and return the response object.
 
@@ -47,7 +47,7 @@ class HttpClient(object):
         """
         return self.session.put(url=self.base_url + url)
 
-    @verbose_error
+    @handle_error
     def delete(self, url):
         """Send DELETE request and return the response object.
 

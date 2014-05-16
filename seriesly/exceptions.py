@@ -1,10 +1,10 @@
 class ConnectionError(Exception):
 
-    def __init__(self, base_url):
-        self.base_url = base_url
+    def __init__(self, error):
+        self.error = error
 
     def __str__(self):
-        return 'Connection refused to "{0}"'.format(self.base_url)
+        return str(self.error)
 
 
 class NotExistingDatabase(Exception):
