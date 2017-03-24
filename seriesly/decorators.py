@@ -11,12 +11,12 @@ RETRY_DELAY = 5
 
 
 @decorator
-def handle_error(method, self, *args, **kargs):
+def handle_error(method, self, *args, **kwargs):
     """Gracefully handle request errors"""
     error = ''
     for _ in range(MAX_RETRY):
         try:
-            response = method(self, *args, **kargs)
+            response = method(self, *args, **kwargs)
         except ConnectionError as e:
             error = e
             time.sleep(RETRY_DELAY)

@@ -1,9 +1,6 @@
 seriesly-python-client
 ======================
 
-[![PyPI](https://pypip.in/version/seriesly/badge.svg)](https://pypi.python.org/pypi/seriesly) [![PyPI](https://pypip.in/download/seriesly/badge.svg)](https://pypi.python.org/pypi/seriesly)
-[![Code Health](https://landscape.io/github/pavel-paulau/seriesly-python-client/master/landscape.png)](https://landscape.io/github/pavel-paulau/seriesly-python-client/master)
-
 Python client for [seriesly](https://github.com/dustin/seriesly) database.
 
 Prerequisites

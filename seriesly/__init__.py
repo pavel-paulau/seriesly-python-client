@@ -1,1 +1,1 @@
-from core import Seriesly
+from seriesly.core import Seriesly

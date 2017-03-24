@@ -37,7 +37,8 @@ class HttpClient(object):
         :param data: request data
         :param params: request params
         """
-        return self.session.post(url=self.base_url + url, data=data, params=params)
+        return self.session.post(url=self.base_url + url, data=data,
+                                 params=params)
 
     @handle_error
     def put(self, url):
@@ -104,9 +105,6 @@ class Seriesly(HttpClient):
 
 
 class Database(object):
-
-    """Datastore
-    """
 
     def __init__(self, dbname, connection):
         self._dbname = dbname
